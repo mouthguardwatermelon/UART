@@ -21,18 +21,18 @@ reg [7:0] reg_data;
 always @(posedge clk) begin
     if (reset) begin
         state <= IDLE;                                                                                      
-        idx <= '0;
+        idx <= 1'b0;
         tx <= 1'b1;
-        busy <= '0;
-        done <= '0;
+        busy <= 1'b0;
+        done <= 1'b0;
         counter_start<=1'b0;
-        reg_data <= '0;
+        reg_data <= 1'b0;
     end
     else begin
         case(state)
             IDLE: begin
-                done <= '0;
-                busy <= '0;
+                done <= 1'b0;
+                busy <= 1'b0;
                 tx <= 1'b1;
                 if (start) begin
                     busy <= 1'b1;
@@ -110,14 +110,11 @@ always @(posedge clk) begin
     end else begin
         rx_meta <=rx;
         rx_sync <= rx_meta;
-        data_valid <='0;
-        framing_error <= '0;
+        data_valid <=1'b0;
+        framing_error <= 1'b0;
         case(state)
             IDLE: begin
-                busy <= 1'b0;
-                done <= '0;
                 if (!rx_sync) begin
-                    busy <= 1'b1;
                     counter_start <= 1'b1;
                     state <= START;
                     end
@@ -125,11 +122,10 @@ always @(posedge clk) begin
             START: begin
                 if (bitdone==2'b10) begin
                     if (!rx_sync) begin
-                        idx <= '0;
+                        idx <= 1'b0;
                         state <= DATA;
                     end else begin
                         counter_start<=1'b0;
-                        busy <= 1'b0;
                         state <= IDLE;
                     end
                 end                    
@@ -152,7 +148,6 @@ always @(posedge clk) begin
                     end else begin
                         framing_error<=1'b1;
                     end
-                    busy<=1'b0;
                     state<=IDLE;
                     counter_start<=1'b0;
                 end
@@ -182,7 +177,7 @@ always @(*) begin
     else if (start && (count==10'd216))
         done = 2'b10;
     else
-        done = '0;
+        done = 1'b 0;
 end
 
 always @(posedge clk) begin
